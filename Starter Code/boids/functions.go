@@ -1,3 +1,3 @@
 package main
 
-//place your Boids engine functions here.
+//place your non-drawing functions here.

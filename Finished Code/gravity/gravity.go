@@ -59,9 +59,9 @@ func UpdatePosition(b Body, oldAcceleration OrderedPair, oldVelocity OrderedPair
 	return pos
 }
 
-func ComputeNetForce()
+//func ComputeNetForce()
 
-func ComputeForce()
+//func ComputeForce()
 
 
 

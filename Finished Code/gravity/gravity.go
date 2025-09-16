@@ -59,11 +59,40 @@ func UpdatePosition(b Body, oldAcceleration OrderedPair, oldVelocity OrderedPair
 	return pos
 }
 
-//func ComputeNetForce()
+func ComputeNetForce(currentUniverse Universe, b Body) OrderedPair {
+	var netForce OrderedPair 
+	
+	for i := range currentUniverse.bodies {
+		if currentUniverse.bodies[i] != b {
+			G := currentUniverse.gravitationalConstant 
+			currentForce := ComputeForce(b, currentUniverse.bodies[i], G)
+			netForce.x += currentForce.x 
+			netForce.y += currentForce.y 
+		}
+	}
+	return netForce
+}
 
-//func ComputeForce()
 
+func ComputeForce(b, b2 Body, G float64) OrderedPair {
+	var force OrderedPair
 
+	d := Distance(b.position,b2.position)
+
+	if d == 0.0 {
+		return force
+	}
+
+	F := G * b.mass * b2.mass / (d*d)
+
+	deltaX := b2.position.x - b.position.x
+	deltaY := b2.position.y - b.position.y 
+
+	force.x = F * deltaX/d 
+	force.y = F * deltaY/d 
+
+	return force 
+}
 
 //Distance takes two position ordered pairs and it returns the distance between these two points in 2-D space.
 func Distance(p1, p2 OrderedPair) float64 {
@@ -72,3 +101,50 @@ func Distance(p1, p2 OrderedPair) float64 {
 	deltaY := p1.y - p2.y
 	return math.Sqrt(deltaX*deltaX + deltaY*deltaY)
 }
+
+func CopyUniverse(currentUniverse Universe) Universe {
+	var newUniverse Universe 
+
+	newUniverse.gravitationalConstant = currentUniverse.gravitationalConstant
+	
+	newUniverse.width = currentUniverse.width 
+	
+	// newUniverse.bodies = currentUniverse.bodies 
+
+	numBodies := len(currentUniverse.bodies)
+
+	newUniverse.bodies = make([]Body, numBodies)
+
+	for i := range newUniverse.bodies {
+		newUniverse.bodies[i] = CopyBody(currentUniverse.bodies[i])
+	}
+
+	return newUniverse
+
+}
+
+
+func CopyBody(b Body) Body {
+	var b2 Body 
+
+	b2.name = b.name
+	b2.mass = b.mass
+	b2.radius = b.radius
+	
+	b2.red = b.red
+	b2.green = b.green
+	b2.blue = b.blue
+
+	b2.position.x = b.position.x  
+	b2.position.y = b.position.y 
+
+	b2.velocity.x = b.velocity.x
+	b2.velocity.y = b.velocity.y  
+
+	b2.acceleration.x = b.acceleration.x
+	b2.acceleration.y = b.acceleration.y
+
+	return b2 
+
+}
+
